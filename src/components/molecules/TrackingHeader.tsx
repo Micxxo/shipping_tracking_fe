@@ -22,13 +22,24 @@ export const TrackingHeader = () => {
     setTrackingError(null);
   };
 
+  const sanitizeTrackingNumber = (value: string | null): string | null => {
+    if (!value) return null;
+
+    const sanitized = value.trim();
+    return sanitized.length > 0 ? sanitized : null;
+  };
+
   const handleTrack = () => {
-    if (tracking.isPending || !trackingNumber) return;
+    const sanitizedTrackingNumber = sanitizeTrackingNumber(trackingNumber);
+
+    if (tracking.isPending || !sanitizedTrackingNumber) return;
+
     handleClearStores();
     setIsTrackingLoading(true);
+
     tracking.mutateAsync(
       {
-        tracking_number: trackingNumber ?? '',
+        tracking_number: sanitizedTrackingNumber,
         slug: selectedCourier?.slug ?? undefined,
       },
       {
@@ -46,10 +57,13 @@ export const TrackingHeader = () => {
   };
 
   const handleInputChange = (value: string) => {
-    setTrackingNumber(value);
+    const sanitized = value.trimStart();
 
-    // clear store if no value
-    if (!value) handleClearStores();
+    setTrackingNumber(sanitized || null);
+
+    if (!sanitized) {
+      handleClearStores();
+    }
   };
 
   return (
