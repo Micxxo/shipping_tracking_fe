@@ -1,13 +1,10 @@
 'use client';
-import InternalServerError from '@/components/molecules/InternalServerError';
-import ToManyRequest from '@/components/molecules/ToManyRequest';
+import RenderTrackingError from '@/components/molecules/RenderTrackingError';
 import { TrackingHeader } from '@/components/molecules/TrackingHeader';
 import TrackingHistory from '@/components/molecules/TrackingHistory';
-import TrackingNotFound from '@/components/molecules/TrackingNotFound';
 import TrackingSkeletons from '@/components/molecules/TrackingSkeletons';
 import { Tracking } from '@/interfaces';
 import { useTrackingStore } from '@/stores';
-import { HttpStatusCode } from 'axios';
 import { Package, MapPin, Calendar } from 'lucide-react';
 
 export default function Home() {
@@ -51,17 +48,7 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto lg:overflow-y-hidden">
             {isTrackingLoading && <TrackingSkeletons />}
 
-            {trackingError?.code === HttpStatusCode.TooManyRequests && (
-              <ToManyRequest />
-            )}
-
-            {trackingError?.code === HttpStatusCode.NotFound && (
-              <TrackingNotFound />
-            )}
-
-            {trackingError?.code === HttpStatusCode.InternalServerError && (
-              <InternalServerError />
-            )}
+            {trackingError && <RenderTrackingError code={trackingError.code} />}
 
             {trackingData && !trackingError && (
               <div className="p-6 sm:p-8">
